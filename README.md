@@ -31,10 +31,21 @@ Run following script to clone & setup repositories (found in docker-compose-yml)
 $ npm run plop setup
 ```
 
-#### 5. Spin up docker containers (with dev config)
+
+
+### Docker CLI
+#### Create and start containers (with dev config)
 ```bash
 $ docker-compose -f docker-compose.yml -f docker-compose-dev.yml up
 ```
+
+#### Stop & remove containers
+```bash
+$ docker-compose down
+```
+
+More commands can be found at:
+https://docs.docker.com/compose/reference/overview/
 
 
 ### Generators

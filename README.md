@@ -34,14 +34,19 @@ $ npm run plop setup
 
 
 ### Docker CLI
-#### Create and start containers (with dev config)
+#### Create and start containers (with dev config):
 ```bash
 $ docker-compose -f docker-compose.yml -f docker-compose-dev.yml up
 ```
 
-#### Stop & remove containers
+#### Stop & remove containers:
 ```bash
 $ docker-compose down
+```
+
+#### List containers:
+```bash
+$ docker ps -a
 ```
 
 More commands can be found at:

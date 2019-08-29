@@ -1,18 +1,15 @@
 /* eslint-disable no-console */
-const { readSync, write } = require('node-yaml');
 const git = require('simple-git/promise');
 const url = require('url');
 const fs = require('fs');
 const { exec } = require('child_process');
 const isGitUrl = require('is-git-url');
 const appRoot = require('app-root-path');
-
 const DockerManager = require('./docker.manager');
 
 module.exports = function (plop) {
   /**
    * Setup enviroment
-   * 
    * @command plop setup | npm run plop setup
    */
   plop.setGenerator('setup', {
@@ -93,7 +90,6 @@ module.exports = function (plop) {
 
   /**
    * Add new service configuration
-   * 
    * @command plop service add | npm run plop service add
    */
   plop.setGenerator('service add', {
@@ -181,7 +177,6 @@ module.exports = function (plop) {
   plop.setActionType('git clone', async function (answers, config, plop) {
     try {
       const {remote, targetPath} = config;
-
       if (fs.existsSync(targetPath)) {
         throw `Target path already exists: ${targetPath}`;
       }
@@ -199,7 +194,6 @@ module.exports = function (plop) {
   plop.setActionType('git fetch', async function (answers, config, plop) {
     try {
       const {targetPath} = config;
-
       if (!fs.existsSync(targetPath)) {
         throw `Target path does not exists: ${targetPath}`;
       }

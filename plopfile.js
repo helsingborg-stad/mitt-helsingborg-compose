@@ -52,7 +52,7 @@ module.exports = function (plop) {
       let actions = [];
       let port = 3030; // Starting port for all services
 
-      const repositoriesDir = `${appRoot}/repos`;
+      const repositoriesDir = `${appRoot}/repositories`;
       const dockerFileTemplatePath = fs.existsSync(`${appRoot}/templates/template.Dockerfile`) ? `${appRoot}/templates/template.Dockerfile` : false;
       const services = Object.values(DockerManager.find());
 

@@ -130,6 +130,14 @@ class DockerManager {
     return false;
   }
 
+  getConfigPath(env) {
+    if (this._enviromentExists(env)) {
+      return this.dockerCompose[env];
+    }
+
+    return false;
+  }
+
   _init(dockerCompose) {    
     Object.entries(dockerCompose).forEach(file => {
       const env = file[0];

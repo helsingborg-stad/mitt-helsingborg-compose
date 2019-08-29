@@ -3,9 +3,8 @@ const appRoot = require('app-root-path');
 const { readSync, writeSync } = require('node-yaml');
 
 const DOCKER_COMPOSE_YML_FILES = {
-  'default': `${appRoot}/docker-compose-test.yml`,
-  'develop': `${appRoot}/docker-compose-dev-test.yml`,
-  'test': `${appRoot}/docker-compose-test.yml`
+  'default': `${appRoot}/docker-compose.yml`,
+  'develop': `${appRoot}/docker-compose-dev.yml`,
 };
 
 class DockerManager {

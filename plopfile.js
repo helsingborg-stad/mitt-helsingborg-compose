@@ -13,10 +13,44 @@ module.exports = function (plop) {
    * @command plop setup | npm run plop setup
    */
   plop.setGenerator('setup', {
-    description: 'application setup logic',
-    prompts: [],
-    actions: data => {
+    description: 'Download repositories & setup configuration',
+    prompts: [
+      {
+        type: 'confirm',
+        name: 'gitClone',
+        message: 'Do you want to clone repositories?',
+      },
+      {
+        type: 'confirm',
+        name: 'gitCheckout',
+        message: 'Do you want to checkout repositories to develop branch (if exists)?',
+      },
+      {
+        type: 'confirm',
+        name: 'npmInstall',
+        message: 'Do you want to install NPM dependencies?',
+      },
+      {
+        type: 'confirm',
+        name: 'copyEnv',
+        message: 'Do you want to copy enviroment files?',
+      },
+      {
+        type: 'confirm',
+        name: 'copyDockerFile',
+        message: 'Do you want to copy DockerFiles?',
+      },
+      {
+        type: 'confirm',
+        name: 'appendService',
+        message: 'Do you want to append servies to dev config?',
+      }
+    ],
+    actions: answers => {
+      const {gitClone, gitCheckout, npmInstall, copyEnv, copyDockerFile, appendService} = answers;
+
       let actions = [];
+      let port = 3030; // Starting port for all services
 
       const repositoriesDir = `${appRoot}/repos`;
       const dockerFileTemplatePath = fs.existsSync(`${appRoot}/templates/template.Dockerfile`) ? `${appRoot}/templates/template.Dockerfile` : false;
@@ -27,34 +61,40 @@ module.exports = function (plop) {
         const repositoryPath = `${repositoriesDir}/${image}`;
         const exampleEnvPath = fs.existsSync(`${repositoryPath}/example.env`) ? `${repositoryPath}/example.env` : false;
 
-        actions.push({
-          type: 'git clone',
-          remote: build,
-          targetPath: repositoryPath,
-          abortOnFail: false
-        });
+        if (gitClone) {
+          actions.push({
+            type: 'git clone',
+            remote: build,
+            targetPath: repositoryPath,
+            abortOnFail: false
+          });
+        }
   
-        actions.push({
-          type: 'git fetch',
-          targetPath: repositoryPath,
-          abortOnFail: false
-        });
-      
-        actions.push({
-          type: 'git checkout',
-          targetPath: repositoryPath,
-          branch: 'develop',
-          abortOnFail: false
-        });
-    
-        actions.push({
-          type: 'npm',
-          targetPath: repositoryPath,
-          command: 'install',
-          abortOnFail: false
-        });
+        if (gitCheckout) {
+          actions.push({
+            type: 'git fetch',
+            targetPath: repositoryPath,
+            abortOnFail: false
+          });
+        
+          actions.push({
+            type: 'git checkout',
+            targetPath: repositoryPath,
+            branch: 'develop',
+            abortOnFail: false
+          });
+        }
 
-        if (exampleEnvPath) {
+        if (npmInstall) {
+          actions.push({
+            type: 'npm',
+            targetPath: repositoryPath,
+            command: 'install',
+            abortOnFail: false
+          });
+        }
+    
+        if (exampleEnvPath && copyEnv) {
           actions.push({
             type: 'add',
             path: `${repositoryPath}/.env`,
@@ -64,7 +104,7 @@ module.exports = function (plop) {
           });
         }
 
-        if (dockerFileTemplatePath) {
+        if (dockerFileTemplatePath && copyDockerFile) {
           actions.push({
             type: 'add',
             path: `${repositoryPath}/DockerFile`,
@@ -74,6 +114,26 @@ module.exports = function (plop) {
             force: true
           });
         }
+
+        if (appendService) {
+          actions.push({
+            type: 'docker service append',
+            serviceName: image, 
+            serviceData: {
+              build: `./repositories/${image}`,
+              volumes: [`./repositories/${image}:/usr/src/app`],
+              ports: [`${port}:${port}`],
+              command: 'npm run dev',
+              environment: [
+                'NODE_ENV=development',
+                `PORT=${port}`
+              ]
+            }, 
+            enviroment: 'develop'
+          });
+        }
+
+        port++;
       });
 
       actions.push({
@@ -144,20 +204,20 @@ module.exports = function (plop) {
       let actions = [];
 
       actions.push({
-        type: 'docker-compose.yml',
+        type: 'docker service append',
         serviceName: serviceName, 
-        serviceObject: {
+        serviceData: {
           image: serviceName,
           build: `${serviceRepository}`,
           networks: ['backend']
         }, 
-        successMessage: 'Succesfully added service to global config'
+        enviroment: 'default'
       });
 
       actions.push({
-        type: 'docker-compose-dev.yml',
+        type: 'docker service append',
         serviceName: serviceName, 
-        serviceObject: {
+        serviceData: {
           build: `./repositories/${serviceName}`,
           volumes: [`./repositories/${serviceName}:/usr/src/app`],
           ports: [`${servicePort}:${servicePort}`],
@@ -167,7 +227,7 @@ module.exports = function (plop) {
             `PORT=${servicePort}`
           ]
         }, 
-        successMessage: 'Succesfully added service to develop config'
+        enviroment: 'develop'
       });
 
       return actions;
@@ -238,17 +298,13 @@ module.exports = function (plop) {
     }
   });
 
-  // TODO: Refactor this
-  const configureDockerComposeService = (env) => (async function (answers, config, plop) {
-    const {serviceName, serviceObject, successMessage} = config;
+  plop.setActionType('docker service append', async function (answers, config, plop) {
     try {
-      console.log(DockerManager.create(plop.getHelper('lowerCase')(serviceName), serviceObject, env));
-
-      return successMessage ? successMessage : 'Success!';
-    } catch (e) {
-      throw e;
+      const {serviceName, serviceData, enviroment} = config;
+      DockerManager.put(plop.getHelper('lowerCase')(serviceName), serviceData, enviroment);
+      return `Append config to ${serviceName} in ${DockerManager.getConfigPath(enviroment)}`;
+    } catch(e) {
+      console.log(e);
     }
   });
-  plop.setActionType('docker-compose.yml', configureDockerComposeService('default'));
-  plop.setActionType('docker-compose-dev.yml', configureDockerComposeService('develop'));
 };

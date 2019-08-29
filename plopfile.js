@@ -59,7 +59,6 @@ module.exports = function (plop) {
       services.forEach(service => {
         const {build, image} = service;
         const repositoryPath = `${repositoriesDir}/${image}`;
-        const exampleEnvPath = fs.existsSync(`${repositoryPath}/example.env`) ? `${repositoryPath}/example.env` : false;
 
         if (gitClone) {
           actions.push({
@@ -93,12 +92,12 @@ module.exports = function (plop) {
             abortOnFail: false
           });
         }
-    
-        if (exampleEnvPath && copyEnv) {
+
+        if (copyEnv) {
           actions.push({
             type: 'add',
             path: `${repositoryPath}/.env`,
-            templateFile: exampleEnvPath,
+            templateFile: `${repositoryPath}/example.env`,
             skipIfExists: true,
             abortOnFail: false
           });

@@ -4,7 +4,9 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "plop": "plop"
+    "plop": "plop",
+    "start": "docker-compose -f docker-compose.yml -f docker-compose-develop.yml up",
+    "stop": "docker-compose down"
   },
   "author": "Nikolas Ramstedt",
   "license": "ISC",

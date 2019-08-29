@@ -87,7 +87,6 @@ class DockerManager {
   }
 
   put(service, data, env = 'default') {
-    console.log('TCL: DockerManager -> put -> env', env);
     if (env === 'all') {
       return this.put(service, data, Object.keys(this.dockerCompose));
     }

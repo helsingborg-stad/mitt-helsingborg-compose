@@ -2,9 +2,13 @@ const fs = require('fs');
 const appRoot = require('app-root-path');
 const { readSync, writeSync } = require('node-yaml');
 
+const DOCKER_COMPOSE_YML_TEMPLATE = `${appRoot}/templates/docker-compose-template.yml`;
+
 const DOCKER_COMPOSE_YML_FILES = {
   'default': `${appRoot}/docker-compose.yml`,
-  'develop': `${appRoot}/docker-compose-dev.yml`,
+  'develop': `${appRoot}/docker-compose-develop.yml`,
+  'stage': `${appRoot}/docker-compose-stage.yml`,
+  'production': `${appRoot}/docker-compose-production.yml`,
 };
 
 class DockerManager {

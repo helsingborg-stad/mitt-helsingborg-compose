@@ -8,6 +8,8 @@ const appRoot = require('app-root-path');
 const DockerManager = require('./docker.manager');
 
 module.exports = function (plop) {
+  const START_PORT = 3030;
+
   /**
    * Setup enviroment
    * @command plop setup | npm run plop setup
@@ -50,7 +52,7 @@ module.exports = function (plop) {
       const {gitClone, gitCheckout, npmInstall, copyEnv, copyDockerFile, appendService} = answers;
 
       let actions = [];
-      let port = 3030; // Starting port for all services
+      let port = START_PORT; // Starting port for all services
 
       const repositoriesDir = `${appRoot}/repositories`;
       const dockerFileTemplatePath = fs.existsSync(`${appRoot}/templates/template.Dockerfile`) ? `${appRoot}/templates/template.Dockerfile` : false;
@@ -185,7 +187,7 @@ module.exports = function (plop) {
         type: 'input',
         name: 'servicePort',
         message: 'PORT',
-        default: '3030',
+        default: Object.keys(DockerManager.find('default')).length + START_PORT,
         validate: input => {
           if (!isNaN(input)) {
             return true;

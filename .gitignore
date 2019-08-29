@@ -14,4 +14,6 @@ server.key
 
 repositories/
 
-.docker-compose-developer.yml
+docker-compose-develop.yml
+docker-compose-stage.yml
+docker-compose-production.yml

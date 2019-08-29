@@ -135,8 +135,17 @@ class DockerManager {
       const env = file[0];
       const path = file[1];
 
+      // Make sure config file exists
       if (!fs.existsSync(path)) {
-        throw `Cannot find docker-compose file: ${path}`;
+        if (!fs.existsSync(DOCKER_COMPOSE_YML_TEMPLATE)) {
+          throw `Cannot locate docker-compose template: ${DOCKER_COMPOSE_YML_TEMPLATE}`;
+        }
+
+        const ymlTemplate = readSync(DOCKER_COMPOSE_YML_TEMPLATE);
+        ymlTemplate.services = {};
+
+        // Create config from template
+        writeSync(path, ymlTemplate, {noCompatMode: true, encoding: 'utf8'});
       }
 
       this.dockerCompose[env] = path;

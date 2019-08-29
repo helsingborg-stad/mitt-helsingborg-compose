@@ -79,6 +79,14 @@ module.exports = function (plop) {
         }
       });
 
+      actions.push({
+        type: 'add',
+        path: `${appRoot}/.env`,
+        templateFile: `${appRoot}/example.env`,
+        skipIfExists: true,
+        abortOnFail: false,
+      });
+
       return actions;
     }
   });

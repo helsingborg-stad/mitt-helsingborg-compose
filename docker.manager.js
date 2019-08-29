@@ -74,7 +74,11 @@ class DockerManager {
       return env.map(envItem => (this.update(service, data, envItem))).filter(service => (service));
     }
 
-    if (this._enviromentExists(env) && this.get(service, env)) {
+    if (this._enviromentExists(env)) {
+      if (!this.get(service, env)) {
+        return this.create(service, data, env);
+      }
+      
       const yml = this._readConfig(env);
       yml.services[service] = Object.assign({}, data);
       this.services[env] = Object.assign({}, yml.services);
@@ -95,7 +99,10 @@ class DockerManager {
       return env.map(envItem => (this.put(service, data, envItem))).filter(service => (service));
     }
 
-    if (this._enviromentExists(env) && this.get(service, env)) {
+    if (this._enviromentExists(env)) {
+      if (!this.get(service, env)) {
+        return this.create(service, data, env);
+      }
       const yml = this._readConfig(env);
       yml.services = Object.assign(yml.services, {[service]: data});
       this.services[env] = Object.assign({}, yml.services);

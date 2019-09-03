@@ -108,7 +108,7 @@ module.exports = function (plop) {
         if (dockerFileTemplatePath && copyDockerFile) {
           actions.push({
             type: 'add',
-            path: `${repositoryPath}/DockerFile`,
+            path: `${repositoryPath}/Dockerfile`,
             templateFile: dockerFileTemplatePath,
             skipIfExists: false,
             abortOnFail: false,

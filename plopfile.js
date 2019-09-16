@@ -59,7 +59,7 @@ module.exports = function (plop) {
       }
     ],
     actions: answers => {
-      const {gitClone, gitCheckout, npmInstall, copyEnv, copyDockerFile, copyHerokuFile, appendService} = answers;
+      const {gitClone, gitCheckout, npmInstall, copyEnv, copyDockerFile, copyHerokuFile, copyCircleciFile, appendService} = answers;
 
       let actions = [];
       let port = START_PORT; // Starting port for all services

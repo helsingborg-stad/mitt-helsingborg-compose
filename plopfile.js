@@ -44,18 +44,24 @@ module.exports = function (plop) {
       },
       {
         type: 'confirm',
+        name: 'copyHerokuFile',
+        message: 'Do you want to copy Heroku configuration files?',
+      },
+      {
+        type: 'confirm',
         name: 'appendService',
         message: 'Do you want to append servies to dev config?',
       }
     ],
     actions: answers => {
-      const {gitClone, gitCheckout, npmInstall, copyEnv, copyDockerFile, appendService} = answers;
+      const {gitClone, gitCheckout, npmInstall, copyEnv, copyDockerFile, copyHerokuFile, appendService} = answers;
 
       let actions = [];
       let port = START_PORT; // Starting port for all services
 
       const repositoriesDir = `${appRoot}/repositories`;
       const dockerFileTemplatePath = fs.existsSync(`${appRoot}/templates/template.Dockerfile`) ? `${appRoot}/templates/template.Dockerfile` : false;
+      const herokuFileTemplatePath = fs.existsSync(`${appRoot}/templates/template.Herokufile`) ? `${appRoot}/templates/template.Herokufile` : false;
       const services = Object.values(DockerManager.find());
 
       services.forEach(service => {
@@ -111,6 +117,17 @@ module.exports = function (plop) {
             path: `${repositoryPath}/Dockerfile`,
             templateFile: dockerFileTemplatePath,
             skipIfExists: false,
+            abortOnFail: false,
+            force: true
+          });
+        }
+
+        if (herokuFileTemplatePath && copyHerokuFile) {
+          actions.push({
+            type: 'add',
+            path: `${repositoryPath}/heroku.yml`,
+            templateFile: herokuFileTemplatePath,
+            skipIfExists: true,
             abortOnFail: false,
             force: true
           });

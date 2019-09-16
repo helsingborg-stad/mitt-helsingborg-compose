@@ -49,6 +49,11 @@ module.exports = function (plop) {
       },
       {
         type: 'confirm',
+        name: 'copyCircleciFile',
+        message: 'Do you want to copy Circleci configuration files?',
+      },
+      {
+        type: 'confirm',
         name: 'appendService',
         message: 'Do you want to append servies to dev config?',
       }
@@ -61,7 +66,8 @@ module.exports = function (plop) {
 
       const repositoriesDir = `${appRoot}/repositories`;
       const dockerFileTemplatePath = fs.existsSync(`${appRoot}/templates/template.Dockerfile`) ? `${appRoot}/templates/template.Dockerfile` : false;
-      const herokuFileTemplatePath = fs.existsSync(`${appRoot}/templates/template.Herokufile`) ? `${appRoot}/templates/template.Herokufile` : false;
+      const herokuFileTemplatePath = fs.existsSync(`${appRoot}/templates/template.Heroku`) ? `${appRoot}/templates/template.Heroku` : false;
+      const circleciFileTemplatePath = fs.existsSync(`${appRoot}/templates/template.Circleci`) ? `${appRoot}/templates/template.Circleci` : false;
       const services = Object.values(DockerManager.find());
 
       services.forEach(service => {
@@ -127,6 +133,17 @@ module.exports = function (plop) {
             type: 'add',
             path: `${repositoryPath}/heroku.yml`,
             templateFile: herokuFileTemplatePath,
+            skipIfExists: true,
+            abortOnFail: false,
+            force: true
+          });
+        }
+
+        if (circleciFileTemplatePath && copyCircleciFile) {
+          actions.push({
+            type: 'add',
+            path: `${repositoryPath}/.circleci/config.yml`,
+            templateFile: circleciFileTemplatePath,
             skipIfExists: true,
             abortOnFail: false,
             force: true

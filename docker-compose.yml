@@ -40,7 +40,7 @@ services:
     build: "https://github.com/helsingborg-stad/watson-helsingborg-io.git"
     networks:
       - backend
-  watson-helsingborg-io:
+  form-helsingborg-io:
     image: form-helsingborg-io
     build: "https://github.com/helsingborg-stad/form-helsingborg-io.git"
     networks:

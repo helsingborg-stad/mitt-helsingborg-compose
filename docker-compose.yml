@@ -1,50 +1,52 @@
-version: "3"
+version: '3'
 services:
   mitt-helsingborg-io:
     image: mitt-helsingborg-io
-    build: "https://github.com/helsingborg-stad/mitt-helsingborg-io.git"
+    build: 'https://github.com/helsingborg-stad/mitt-helsingborg-io.git'
     networks:
       - backend
   authentication-helsingborg-io:
     image: authentication-helsingborg-io
-    build: "https://github.com/helsingborg-stad/authentication-helsingborg-io.git"
+    build: 'https://github.com/helsingborg-stad/authentication-helsingborg-io.git'
     networks:
       - backend
   userdata-helsingborg-io:
     image: userdata-helsingborg-io
-    build: "https://github.com/helsingborg-stad/userdata-helsingborg-io.git"
-    networks:
-      - backend
-  payment-helsingborg-io:
-    image: payment-helsingborg-io
-    build: "https://github.com/helsingborg-stad/payment-helsingborg-io.git"
+    build: 'https://github.com/helsingborg-stad/userdata-helsingborg-io.git'
     networks:
       - backend
   service-helsingborg-io:
     image: service-helsingborg-io
-    build: "https://github.com/helsingborg-stad/service-helsingborg-io.git"
+    build: 'https://github.com/helsingborg-stad/service-helsingborg-io.git'
     networks:
       - backend
   notification-helsingborg-io:
     image: notification-helsingborg-io
-    build: "https://github.com/helsingborg-stad/notification-helsingborg-io.git"
-    networks:
-      - backend
-  chat-helsingborg-io:
-    image: chat-helsingborg-io
-    build: "https://github.com/helsingborg-stad/chat-helsingborg-io.git"
+    build: 'https://github.com/helsingborg-stad/notification-helsingborg-io.git'
     networks:
       - backend
   watson-helsingborg-io:
     image: watson-helsingborg-io
-    build: "https://github.com/helsingborg-stad/watson-helsingborg-io.git"
+    build: 'https://github.com/helsingborg-stad/watson-helsingborg-io.git'
     networks:
       - backend
+  db:
+    image: mysql
+    command: '--default-authentication-plugin=mysql_native_password'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: develop
+    networks:
+      - backend
+    ports:
+      - '3039:3306'
   form-helsingborg-io:
     image: form-helsingborg-io
-    build: "https://github.com/helsingborg-stad/form-helsingborg-io.git"
+    build: 'https://github.com/helsingborg-stad/form-helsingborg-io.git'
     networks:
       - backend
+    depends_on:
+      - db
 networks:
   backend:
     driver: bridge

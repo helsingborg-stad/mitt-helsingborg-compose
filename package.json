@@ -16,7 +16,7 @@
     "is-git-url": "^1.0.0",
     "node-yaml": "^4.0.1",
     "plop": "^2.4.0",
-    "simple-git": "^1.124.0",
+    "simple-git": "^3.15.0",
     "write-yaml-file": "^3.0.1"
   }
 }
